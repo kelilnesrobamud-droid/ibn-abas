@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="am">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>የዒብን አባስ መዕሃድ - መረጃ እና መላላኪያ ማዕከል</title>
+    <style>
+        :root { --primary: #004d40; --accent: #ffc107; --bg: #f0f2f5; }
+        body { font-family: 'Segoe UI', Arial, sans-serif; background-color: var(--bg); margin: 0; padding: 10px; }
+        
+        .header { background: var(--primary); color: white; padding: 25px; border-radius: 0 0 20px 20px; text-align: center; margin-bottom: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
+        
+        /* የጋራ ቻት መድረክ */
+        .group-section { background: white; padding: 15px; border-radius: 15px; margin: 10px auto 30px; max-width: 600px; border: 2px solid var(--accent); }
+        .group-btn { background: #25d366; color: white; padding: 12px 25px; border-radius: 30px; text-decoration: none; display: inline-block; font-weight: bold; font-size: 1.1em; }
+
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 20px; max-width: 1300px; margin: auto; }
+        .card { background: white; padding: 20px; border-radius: 15px; border-top: 6px solid var(--accent); box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
+        
+        .district-title { color: var(--primary); font-size: 1.2em; border-bottom: 1px solid #eee; padding-bottom: 10px; margin-bottom: 15px; }
+        
+        .locked-content { display: none; text-align: left; animation: fadeIn 0.5s; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        .student-box { background: #f9f9f9; padding: 15px; border-radius: 10px; margin-bottom: 15px; border-left: 4px solid var(--primary); }
+        .student-name { font-weight: bold; font-size: 1.1em; margin-bottom: 10px; display: block; }
+
+        /* አዝራሮች */
+        .action-row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+        .btn { border: none; padding: 8px 12px; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 0.85em; transition: 0.2s; color: white; text-decoration: none; }
+        .btn-call { background: #2e7d32; }
+        .btn-sms { background: #0277bd; }
+        .btn-tg { background: #0088cc; }
+        .btn-story { background: #795548; }
+
+        .story-display { display: none; background: #fffde7; padding: 12px; border: 1px dashed #fbc02d; margin-top: 10px; border-radius: 5px; font-style: italic; }
+
+        .main-unlock { width: 100%; background: var(--primary); color: white; padding: 12px; border-radius: 8px; font-weight: bold; font-size: 1em; }
+        .close-all { background: #c62828; width: 100%; margin-top: 20px; }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <h1>የዒብን አባስ መዕሃድ</h1>
+        <p>የቀድሞ ተማሪዎች የታሪክ እና የመገናኛ ማዕከል</p>
+    </div>
+
+    <div class="group-section">
+        <h3>👥 የጋራ መወያያ መድረክ</h3>
+        <p>ሁሉንም የዒብን አባስ ተማሪዎች የሚያገናኝ የጋራ ቻት</p>
+        <a href="https://t.me/your_group" class="group-btn">ወደ ጋራ ቻት ግባ (Telegram)</a>
+    </div>
+
+    <div class="grid" id="main-grid"></div>
+
+    <script>
+        const studentData = [
+            { district: "ምዕራብ አዘርነት", pin: "17", students: [
+                { name: "አ/ወሃብ ሱልጣን", phone: "0934702034", hPin: "22", story: "በምዕራብ አዘርነት የታወቁ የፍትህ ባለሙያ።" },
+                { name: "ኸሊል ነስሮ", phone: "0916691798", hPin: "11", story: "በሃይማኖት ትምህርት ትልቅ አሻራ ያረፉ።" },
+                { name: "ሙከረም ናስር", phone: "0926353404", hPin: "33", story: "የልማት ስራዎች አስተባባሪ።" },
+                { name: "ፋአድ አባስ", phone: "0968473510", hPin: "24", story: "በንግድ ዘርፍ ንቁ ተሳታፊ።" },
+                { name: "ነስረዲን አብዱላህ", phone: "0912749270", hPin: "25", story: "የቀድሞ የዒብን አባስ ተማሪ።" }
+            ]},
+            { district: "ምስራቅ አዘርነት", pin: "24", students: [] },
+            { district: "ወራቤ", pin: "45", students: [] },
+            { district: "ሳንኩራ", pin: "56", students: [
+                { name: "ነጃ ሱሌን", phone: "0926544470", hPin: "01", story: "የሳንኩራ ወረዳ የቀድሞ ተማሪ።" },
+                { name: "ሙባረክ ሐቢብ", phone: "0932747844", hPin: "02", story: "ታታሪ ወጣት።" }
+            ]},
+            { district: "ጦራ", pin: "67", students: [
+                { name: "ሙሀመድ አብዱላህ", phone: "0916763085", hPin: "10", story: "የጦራ መረጃ ክፍል ተማሪ።" }
+            ]},
+            { district: "ሚቶ", pin: "78", students: [] },
+            { district: "ሁልባራግ", pin: "89", students: [] },
+            { district: "ስልጢ", pin: "90", students: [
+                { name: "ሙኸታር ሳቢር", phone: "0922947804", hPin: "17", story: "የስልጢ ወረዳ ተማሪ።" }
+            ]},
+            { district: "ዳሎቻ", pin: "33", students: [] }
+        ];
+
+        const container = document.getElementById('main-grid');
+
+        studentData.forEach((d, dIdx) => {
+            let sHtml = "";
+            d.students.forEach((s, sIdx) => {
+                let sId = `story-${dIdx}-${sIdx}`;
+                sHtml += `
+                    <div class="student-box">
+                        <span class="student-name">👤 ${s.name}</span>
+                        <div class="action-row">
+                            <a href="tel:${s.phone}" class="btn btn-call">📞 መደወያ</a>
+                            <a href="sms:${s.phone}" class="btn btn-sms">💬 የግል ቻት (SMS)</a>
+                            <a href="https://t.me/+251${s.phone.substring(1)}" class="btn btn-tg" target="_blank">✈️ Telegram</a>
+                            <button class="btn btn-story" onclick="openStory('${sId}', '${s.hPin}')">📜 የ${s.name.split(' ')[0]} ታሪክ</button>
+                        </div>
+                        <div id="${sId}" class="story-display">
+                            <strong>የ${s.name} ታሪክ፡</strong><br>${s.story}
+                        </div>
+                    </div>
+                `;
+            });
+
+            container.innerHTML += `
+                <div class="card">
+                    <div class="district-title">📍 የ${d.district} ወረዳ ተማሪዎች መረጃ ክፍል</div>
+                    <button class="main-unlock" id="unlock-btn-${dIdx}" onclick="unlockDist('${dIdx}', '${d.pin}')">🔐 በኮድ ይክፈቱ</button>
+                    <div id="content-${dIdx}" class="locked-content">
+                        ${sHtml || "<p>መረጃው በቅርቡ ይጫናል...</p>"}
+                        <button class="btn close-all" onclick="location.reload()">🔒 ሁሉንም ዝጋ</button>
+                    </div>
+                </div>
+            `;
+        });
+
+        function unlockDist(idx, pin) {
+            let pass = prompt("የወረዳውን መክፈቻ ባለ 2 ዲጂት ኮድ ያስገቡ:");
+            if (pass === pin) {
+                document.getElementById(`content-${idx}`).style.display = "block";
+                document.getElementById(`unlock-btn-${idx}`).style.display = "none";
+            } else { alert("ኮድ ስህተት ነው!"); }
+        }
+
+        function openStory(id, pin) {
+            let pass = prompt("የተማሪውን ታሪክ ለመክፈት ሚስጥር ቁጥሩን ያስገቡ:");
+            if (pass === pin) {
+                document.getElementById(id).style.display = "block";
+            } else { alert("የተሳሳተ ፒን!"); }
+        }
+    </script>
+</body>
+</html>
